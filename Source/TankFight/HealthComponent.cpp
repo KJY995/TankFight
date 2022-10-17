@@ -48,10 +48,10 @@ void UHealthComponent::DamageTaken(AActor *DamagedActor, float Damage, const UDa
 		{
 			if(TankFightGameMode == nullptr) 
 			{
-				UE_LOG(LogTemp, Warning, TEXT("TankFightGameMode Fail"));
+				UE_LOG(LogTemp, Warning, TEXT("TankFight Death Function Fail"));
 				return;
 			}
-			UE_LOG(LogTemp, Warning, TEXT("TankFightGameMode Called"));
+			UE_LOG(LogTemp, Warning, TEXT("TankFight Death Function Called"));
 			TankFightGameMode->ActorDied(DamagedActor);
 		}
 		

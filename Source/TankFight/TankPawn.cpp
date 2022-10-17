@@ -1,12 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "TankPawn.h"
 #include "Components/InputComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
-#include "TankPawn.h"
 #include "Net/UnrealNetwork.h"
 #include "Components/SceneComponent.h"
+#include "TankFightGameMode.h"
 
 // Sets default values
 ATankPawn::ATankPawn()
@@ -44,6 +45,7 @@ void ATankPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	PlayerControllerRef = Cast<APlayerController>(GetController());
+    TankFightGameMode = Cast<ATankFightGameMode>(UGameplayStatics::GetGameMode(this));
 }
 
 void ATankPawn::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
@@ -54,6 +56,7 @@ void ATankPawn::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLife
     DOREPLIFETIME(ATankPawn, ReplicatedHeadRotation);
     DOREPLIFETIME(ATankPawn, Throttle);
     DOREPLIFETIME(ATankPawn, Steering);
+    DOREPLIFETIME(ATankPawn, IsDead);
 }
 
 // Called every frame
@@ -80,6 +83,10 @@ void ATankPawn::Tick(float DeltaTime)
 
         HeadRotation(HitResult.ImpactPoint);
 	}
+    if (IsDead)
+    {
+        Destruction();
+    }
 }
 
 APlayerController* ATankPawn::GetTankPlayerController() const
@@ -192,11 +199,26 @@ bool ATankPawn::Server_FireCannon_Validate()
 
 void ATankPawn::HandleDestruction()
 {
-    //effect
-    SetActorHiddenInGame(true);
-    SetActorTickEnabled(false);
+    IsDead = true;
 }
 
+void ATankPawn::Destruction()
+{
+    SetActorHiddenInGame(true);
+    SetActorTickEnabled(false);
+    if (this->GetTankPlayerController())
+    {
+
+        UE_LOG(LogTemp, Warning, TEXT("Disable Input Called"));
+        this->DisableInput(this->GetTankPlayerController());
+        this->GetTankPlayerController()->bShowMouseCursor = false;
+        TankFightGameMode->TankFightGameOver(false);
+    }
+    else
+    {
+        TankFightGameMode->TankFightGameOver(true);
+    }
+}
 
 /*
 //----------------------------------------------Move

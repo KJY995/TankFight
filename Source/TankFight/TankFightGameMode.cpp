@@ -21,23 +21,34 @@ void ATankFightGameMode::ActorDied(AActor *DeadActor)
     
 	if(DeadActor == nullptr) 
     {
-		//UE_LOG(LogTemp, Warning, TEXT("Null DeadActor"));
+		UE_LOG(LogTemp, Warning, TEXT("Null DeadActor"));
         return;
     }
-    //UE_LOG(LogTemp, Warning, TEXT("%s"), *DeadActor->GetName());
+    UE_LOG(LogTemp, Warning, TEXT("%s"), *DeadActor->GetName());
     if (DeadActor == Tank)
     {
-        
-		//UE_LOG(LogTemp, Warning, TEXT("HandleDestruction Called"));
         Tank->HandleDestruction();
-        if (Tank->GetTankPlayerController())
-        {
-            
-			UE_LOG(LogTemp, Warning, TEXT("Disable Input Called"));
-            Tank->DisableInput(Tank->GetTankPlayerController());
-            Tank->GetTankPlayerController()->bShowMouseCursor = false;
-        }
     }
+    else if(ATankPawn * DeadOpponent = Cast<ATankPawn>(DeadActor))
+    {
+        DeadOpponent->HandleDestruction();
+    }
+}
+void ATankFightGameMode::TankFightGameOver(bool isWin)
+{
+    if (isWin)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Win!"));
+        GameOverEvent(true);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Lose!"));
+        GameOverEvent(false);
+    }
+}
+void ATankFightGameMode::GameOverEvent(bool winner)
+{
 }
 
 void ATankFightGameMode::BeginPlay()

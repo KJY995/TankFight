@@ -15,6 +15,12 @@ public:
 	ATankFightGameMode();
 
 	void ActorDied(AActor* deadActor);
+	
+	void TankFightGameOver(bool isWin);
+
+	void GameOverEvent(bool winner);
+	
+	bool IsWinner = true;
 
 protected:
 

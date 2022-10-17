@@ -30,6 +30,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void HandleDestruction();
+	void Destruction();
+
 	APlayerController* GetTankPlayerController() const;
 
 
@@ -64,6 +66,8 @@ private:
 	TSubclassOf<ACannonShell> CannonShellClass;
 
 	APlayerController* PlayerControllerRef;
+	class ATankFightGameMode* TankFightGameMode;
+
 	void Move(float Value);
 	void Turn(float Value);
 
@@ -75,6 +79,8 @@ private:
 	float Throttle;
 	UPROPERTY(Replicated)
 	float Steering;
+	UPROPERTY(Replicated)
+	bool IsDead = false;
 
 	UFUNCTION()
 	void OnRep_ReplicatedTransform();
